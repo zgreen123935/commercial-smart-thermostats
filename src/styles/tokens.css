@@ -1,0 +1,42 @@
+:root {
+  /* Colors */
+  --color-background: #FBFBFB;
+  --color-on-surface: #191C20;
+  --color-on-surface-variant: #42474E;
+  --color-primary: #35618E;
+  --color-on-primary: #FFFFFF;
+  --color-primary-container: #D1E4FF;
+  --color-on-primary-container: #001D36;
+  --color-error-container: #FFDAD6;
+  --color-on-error-container: #410002;
+  --color-surface-disabled: rgba(30, 26, 32, 0.38);
+  --color-on-surface-disabled: rgba(30, 26, 32, 0.12);
+  --color-surface-container-low: #F5F5F5;
+  --color-outline: #73777F;
+  --color-outline-variant: #C3C7CF;
+
+  /* Typography */
+  --font-family: 'Roboto', sans-serif;
+  
+  /* Title Large */
+  --title-large-size: 22px;
+  --title-large-line-height: 28px;
+  --title-large-weight: 400;
+  
+  /* Headline Small */
+  --headline-small-size: 24px;
+  --headline-small-line-height: 32px;
+  --headline-small-weight: 400;
+  
+  /* Body Large */
+  --body-large-size: 16px;
+  --body-large-line-height: 24px;
+  --body-large-weight: 400;
+  --body-large-spacing: 0.5px;
+  
+  /* Body Medium */
+  --body-medium-size: 14px;
+  --body-medium-line-height: 20px;
+  --body-medium-weight: 400;
+  --body-medium-spacing: 0.25px;
+}
