@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen bg-background">
     <AppHeader 
-      :title="title"
-      :show-back="showBack"
+      :headline="title"
+      :configuration="showBack ? 'small' : 'center-aligned'"
       :show-help="true"
       @help-click="showHelpDialog = true"
     />

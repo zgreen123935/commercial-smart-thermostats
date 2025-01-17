@@ -85,10 +85,9 @@ export default {
 
 /* Base styles */
 body {
-  @apply text-gray-900 antialiased;
+  @apply text-on-surface antialiased bg-white;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: white;
 }
 
 /* Transitions */
@@ -102,28 +101,10 @@ body {
   opacity: 0;
 }
 
-/* iOS-style safe areas */
-.safe-top {
-  padding-top: env(safe-area-inset-top);
-}
-
-.safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* Prevent text selection */
-.no-select {
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-/* Mobile viewport height fix */
-.min-h-screen {
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
-}
-
-html {
-  height: -webkit-fill-available;
+/* Fix iOS button styles */
+button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 </style>

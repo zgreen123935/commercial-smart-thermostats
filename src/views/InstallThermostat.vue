@@ -1,6 +1,9 @@
 <template>
   <div class="min-h-screen bg-background pb-20">
-    <AppHeader title="Install Thermostat" />
+    <AppHeader 
+      headline="Install Thermostat" 
+      configuration="small"
+    />
     
     <div class="pt-16 px-4">
       <h2 class="font-roboto text-headline-small text-on-surface mb-6">Installation Steps</h2>

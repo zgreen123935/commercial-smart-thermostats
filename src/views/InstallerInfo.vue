@@ -7,10 +7,7 @@
         id="name"
         v-model="formData.name"
         label="Your Name"
-        required
         placeholder="Enter your full name"
-        helperText="Case sensitive"
-        @input="logFormState"
       >
         <template #icon>
           <svg class="w-5 h-5 text-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -23,10 +20,7 @@
         id="company"
         v-model="formData.company"
         label="Company"
-        required
         placeholder="Enter your company name"
-        helperText="Case sensitive"
-        @input="logFormState"
       >
         <template #icon>
           <svg class="w-5 h-5 text-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -42,8 +36,8 @@
         type="tel"
         required
         placeholder="Enter your phone number"
-        helperText="Case sensitive"
-        @input="logFormState"
+        :error="!isValidPhone && formData.phone.length > 0"
+        helperText="10 digit phone number including area code"
       >
         <template #icon>
           <svg class="w-5 h-5 text-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,8 +48,8 @@
 
       <div class="fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-outline-variant">
         <AppButton
-          :disabled="!isValid"
-          @click="handleSubmit"
+          type="submit"
+          :disabled="!isFormValid"
         >
           Next
         </AppButton>
@@ -89,21 +83,27 @@ export default {
       phone: ''
     })
 
-    const isValid = computed(() => {
-      const nameValid = formData.value.name.trim().length > 0
-      const companyValid = formData.value.company.trim().length > 0
-      const phoneValid = formData.value.phone.replace(/\D/g, '').length === 10
-      return nameValid && companyValid && phoneValid
+    const isValidPhone = computed(() => {
+      // Remove all non-digits
+      const phone = formData.value.phone.replace(/\D/g, '')
+      // Must be exactly 10 digits
+      return phone.length === 10
     })
 
-    const logFormState = () => {
-      console.log('Form state:', formData.value)
-    }
+    const isFormValid = computed(() => {
+      return formData.value.name.length > 0 &&
+             formData.value.company.length > 0 &&
+             isValidPhone.value
+    })
 
     const handleSubmit = () => {
-      if (!isValid.value) return
+      if (!isFormValid.value) return
 
-      store.commit('setInstallerInfo', {
+      // Format phone number before saving
+      const phone = formData.value.phone.replace(/\D/g, '')
+      formData.value.phone = phone.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3')
+
+      store.commit('site/setInstallerInfo', {
         name: formData.value.name,
         company: formData.value.company,
         phone: formData.value.phone
@@ -114,9 +114,9 @@ export default {
 
     return {
       formData,
-      isValid,
-      handleSubmit,
-      logFormState
+      isValidPhone,
+      isFormValid,
+      handleSubmit
     }
   }
 }

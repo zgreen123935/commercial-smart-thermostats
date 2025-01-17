@@ -1,82 +1,63 @@
 <template>
   <div class="min-h-screen bg-background pb-20">
-    <AppHeader title="Wiring Check" />
+    <AppHeader 
+      headline="Wiring Check" 
+      configuration="small"
+    />
     
     <div class="pt-16 px-4">
-      <h2 class="font-roboto text-headline-small text-on-surface mb-6">Common Wire Check</h2>
-      
-      <div class="space-y-6">
-        <div class="bg-surface-container-low rounded-lg p-4">
-          <p class="font-roboto text-body-large text-on-surface mb-6">
-            Does the existing thermostat have a common (C) wire?
+      <div class="space-y-8">
+        <div class="bg-surface-container-low rounded-xl p-4">
+          <h2 class="text-headline-small text-on-surface mb-4">Common Wire Check</h2>
+          <p class="text-body-large text-on-surface mb-6">
+            There is a C wire connected
           </p>
-          
-          <div class="grid grid-cols-2 gap-4">
-            <button
-              @click="setCommonWire(true)"
-              :class="[
-                'w-full py-4 rounded-lg font-roboto text-body-large transition-colors',
-                hasCommonWire === true 
-                  ? 'bg-primary text-on-primary'
-                  : 'bg-surface-container text-on-surface-variant border border-outline'
-              ]"
+          <div class="flex gap-2">
+            <FilterChip
+              v-model="hasCommonWire"
+              :value="true"
             >
               Yes
-            </button>
-            <button
-              @click="setCommonWire(false)"
-              :class="[
-                'w-full py-4 rounded-lg font-roboto text-body-large transition-colors',
-                hasCommonWire === false
-                  ? 'bg-primary text-on-primary'
-                  : 'bg-surface-container text-on-surface-variant border border-outline'
-              ]"
+            </FilterChip>
+            <FilterChip
+              v-model="hasCommonWire"
+              :value="false"
             >
               No
-            </button>
+            </FilterChip>
           </div>
         </div>
 
-        <div class="bg-surface-container-low rounded-lg p-4">
-          <p class="font-roboto text-body-large text-on-surface mb-6">
+        <div class="bg-surface-container-low rounded-xl p-4">
+          <h2 class="text-headline-small text-on-surface mb-4">Jumper Wires</h2>
+          <p class="text-body-large text-on-surface mb-6">
             Are there any jumper wires installed?
           </p>
-          
-          <div class="grid grid-cols-2 gap-4">
-            <button
-              @click="setHasJumpers(true)"
-              :class="[
-                'w-full py-4 rounded-lg font-roboto text-body-large transition-colors',
-                hasJumpers === true 
-                  ? 'bg-primary text-on-primary'
-                  : 'bg-surface-container text-on-surface-variant border border-outline'
-              ]"
+          <div class="flex gap-2">
+            <FilterChip
+              v-model="hasJumpers"
+              :value="true"
             >
               Yes
-            </button>
-            <button
-              @click="setHasJumpers(false)"
-              :class="[
-                'w-full py-4 rounded-lg font-roboto text-body-large transition-colors',
-                hasJumpers === false
-                  ? 'bg-primary text-on-primary'
-                  : 'bg-surface-container text-on-surface-variant border border-outline'
-              ]"
+            </FilterChip>
+            <FilterChip
+              v-model="hasJumpers"
+              :value="false"
             >
               No
-            </button>
+            </FilterChip>
           </div>
         </div>
 
-        <div v-if="hasJumpers" class="bg-surface-container-low rounded-lg p-4">
+        <div v-if="hasJumpers" class="bg-surface-container-low rounded-xl p-4">
           <label class="block">
-            <span class="font-roboto text-body-large text-on-surface block mb-2">
+            <span class="text-body-large text-on-surface block mb-2">
               Describe jumper wire locations
             </span>
             <textarea
               v-model="jumperNotes"
               rows="3"
-              class="w-full bg-transparent border-2 border-outline rounded-lg p-3 font-roboto text-body-large text-on-surface focus:border-primary focus:outline-none"
+              class="w-full bg-transparent border-2 border-outline rounded-lg p-3 text-body-large text-on-surface focus:border-primary focus:outline-none"
               placeholder="Example: Jumper between Rc and Rh"
             ></textarea>
           </label>
@@ -97,41 +78,32 @@
 
 <script>
 import { ref, computed } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import AppHeader from '@/components/base/AppHeader.vue'
 import AppButton from '@/components/base/AppButton.vue'
+import RadioCell from '@/components/base/RadioCell.vue'
+import FilterChip from '@/components/base/FilterChip.vue'
 
 export default {
   name: 'WiringCheck',
   components: {
     AppHeader,
-    AppButton
+    AppButton,
+    RadioCell,
+    FilterChip
   },
   setup() {
-    const store = useStore()
     const router = useRouter()
+    const store = useStore()
     
     const hasCommonWire = ref(null)
     const hasJumpers = ref(null)
     const jumperNotes = ref('')
 
-    const isValid = computed(() => 
-      hasCommonWire.value !== null && 
-      hasJumpers.value !== null && 
-      (!hasJumpers.value || (hasJumpers.value && jumperNotes.value.trim() !== ''))
-    )
-
-    const setCommonWire = (value) => {
-      hasCommonWire.value = value
-    }
-
-    const setHasJumpers = (value) => {
-      hasJumpers.value = value
-      if (!value) {
-        jumperNotes.value = ''
-      }
-    }
+    const isValid = computed(() => {
+      return hasCommonWire.value !== null && hasJumpers.value !== null && (!hasJumpers.value || (hasJumpers.value && jumperNotes.value.trim() !== ''))
+    })
 
     const handleNext = () => {
       if (!isValid.value) return
@@ -155,8 +127,6 @@ export default {
       hasJumpers,
       jumperNotes,
       isValid,
-      setCommonWire,
-      setHasJumpers,
       handleNext
     }
   }

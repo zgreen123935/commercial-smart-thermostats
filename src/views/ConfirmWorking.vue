@@ -89,17 +89,16 @@ export default {
     const coolingWorking = ref(false)
 
     const isValid = computed(() => {
-      const thermostat = store.getters.currentThermostat
-      if (!thermostat) return false
-
       // Always require display check
       if (!displayWorking.value) return false
 
       // Only require heating check if heating is configured
-      if (thermostat.heatingType !== 'none' && !heatingWorking.value) return false
+      const heatingType = store.state.site.heatingType
+      if (heatingType && heatingType !== 'none' && !heatingWorking.value) return false
 
       // Only require cooling check if cooling is configured
-      if (thermostat.coolingType !== 'none' && !coolingWorking.value) return false
+      const coolingType = store.state.site.coolingType
+      if (coolingType && coolingType !== 'none' && !coolingWorking.value) return false
 
       return true
     })
@@ -107,25 +106,15 @@ export default {
     const handleComplete = () => {
       if (!isValid.value) return
 
-      store.commit('updateThermostat', {
-        index: parseInt(router.currentRoute.value.params.thermostatIndex),
-        data: {
-          verificationDetails: {
-            displayWorking: displayWorking.value,
-            heatingWorking: heatingWorking.value,
-            coolingWorking: coolingWorking.value
-          },
-          isVerified: true
-        }
+      store.commit('site/setVerificationDetails', {
+        displayWorking: displayWorking.value,
+        heatingWorking: heatingWorking.value,
+        coolingWorking: coolingWorking.value,
+        isVerified: true
       })
 
-      // Navigate to the next thermostat or feedback screen
-      const nextIndex = parseInt(router.currentRoute.value.params.thermostatIndex) + 1
-      if (nextIndex < store.state.thermostats.length) {
-        router.push(`/installer/${router.currentRoute.value.params.slug}/thermostat-photos/${nextIndex}`)
-      } else {
-        router.push(`/installer/${router.currentRoute.value.params.slug}/feedback`)
-      }
+      // Navigate to feedback screen
+      router.push(`/installer/${router.currentRoute.value.params.slug}/feedback`)
     }
 
     return {

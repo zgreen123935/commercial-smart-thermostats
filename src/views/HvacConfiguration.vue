@@ -1,55 +1,50 @@
 <template>
   <div class="min-h-screen bg-background pb-20">
-    <AppHeader title="HVAC Configuration" />
+    <AppHeader 
+      headline="Select HVAC System Type" 
+      configuration="small"
+    />
     
     <div class="pt-16 px-4">
-      <h2 class="font-roboto text-headline-small text-on-surface mb-6">Here is our best match!</h2>
-      
-      <InfoCard
-        title="Config Code"
-        value="71B"
-        description="We recommend writing this code down but we will automatically apply it to your Mysa."
-      >
-        <template #description>
-          <p class="text-sm text-gray-600 mt-2">
-            {{ description }}
-          </p>
-        </template>
-      </InfoCard>
-
-      <InfoCard
-        title="Heating Type"
-        value="Two-stage, Electric"
-      />
-
-      <InfoCard
-        title="Cooling Type"
-        value="Single Stage"
-      />
-
-      <InfoCard
-        title="Emergency Heating"
-        value="None"
-      />
-
-      <InfoCard
-        title="Reversing Valve"
-        value="None"
-      />
+      <div class="space-y-2">
+        <RadioCell
+          v-model="systemType"
+          value="oil-gas"
+          header="Oil/Gas"
+          helper="Heating system that uses oil or gas as fuel"
+        />
+        <RadioCell
+          v-model="systemType"
+          value="electric"
+          header="Electric"
+          helper="All-electric heating system"
+        />
+        <RadioCell
+          v-model="systemType"
+          value="heat-pump"
+          header="Heat Pump"
+          helper="System that can both heat and cool by transferring heat"
+        />
+        <RadioCell
+          v-model="systemType"
+          value="hydronic"
+          header="Hydronic"
+          helper="Hot water based heating system"
+        />
+        <RadioCell
+          v-model="systemType"
+          value="fcu"
+          header="FCU (Fan Coil Unit)"
+          helper="Uses a fan to circulate air through a heating/cooling coil"
+        />
+      </div>
 
       <div class="fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-outline-variant">
         <AppButton
-          variant="warning"
-          class="mb-4"
-          @click="reportIssue"
-        >
-          Something doesn't look right
-        </AppButton>
-
-        <AppButton
           @click="handleNext"
+          :disabled="!isValid"
         >
-          Next
+          Continue
         </AppButton>
       </div>
     </div>
@@ -57,25 +52,42 @@
 </template>
 
 <script>
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import AppHeader from '@/components/base/AppHeader.vue'
-import InfoCard from '@/components/base/InfoCard.vue'
 import AppButton from '@/components/base/AppButton.vue'
+import RadioCell from '@/components/base/RadioCell.vue'
 
 export default {
   name: 'HvacConfiguration',
   components: {
     AppHeader,
-    InfoCard,
-    AppButton
+    AppButton,
+    RadioCell
   },
-  methods: {
-    handleNext() {
-      // Navigate to next screen
-      this.$router.push('/installer/' + this.$route.params.slug + '/confirm-working')
-    },
-    reportIssue() {
-      // Handle reporting issues
-      console.log('Reporting issue')
+  setup() {
+    const router = useRouter()
+    const store = useStore()
+    
+    const systemType = ref(null)
+
+    const isValid = computed(() => systemType.value !== null)
+
+    const handleNext = () => {
+      if (!isValid.value) return
+
+      store.commit('setHvacSystem', {
+        type: systemType.value
+      })
+      
+      router.push('/wiring-check')
+    }
+
+    return {
+      systemType,
+      isValid,
+      handleNext
     }
   }
 }

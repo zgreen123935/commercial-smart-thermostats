@@ -1,31 +1,31 @@
 <template>
-  <div class="border-2 border-dashed border-outline rounded-lg p-4 text-center">
-    <div v-if="!modelValue" class="space-y-4">
-      <slot name="icon">
-        <svg class="w-12 h-12 mx-auto text-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-        </svg>
-      </slot>
-      <div>
-        <p class="font-roboto text-body-large text-on-surface">{{ label }}</p>
-        <p class="font-roboto text-body-medium text-on-surface-variant mt-1">
-          {{ description }}
-        </p>
-      </div>
-      <button
-        @click="$refs.fileInput.click()"
-        class="px-4 py-2 bg-primary text-on-primary rounded-full font-roboto text-label-large"
-      >
-        Upload Photo
-      </button>
+  <div class="space-y-4">
+    <div v-if="!modelValue" class="relative">
       <input
-        ref="fileInput"
         type="file"
         accept="image/*"
-        class="hidden"
+        capture="environment"
+        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
         @change="handleUpload"
       >
+      <div 
+        class="
+          border-2 border-dashed border-outline-variant rounded-lg p-8
+          flex flex-col items-center justify-center space-y-4
+          bg-surface-container-low hover:bg-surface-container transition-colors
+          min-h-[200px]
+        "
+      >
+        <svg class="w-8 h-8 text-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <div class="text-center">
+          <h3 class="text-headline-small text-on-surface font-medium mb-1">{{ label }}</h3>
+          <p class="text-on-surface-variant">{{ description }}</p>
+        </div>
+      </div>
     </div>
+
     <div v-else class="relative">
       <img :src="modelValue" :alt="label" class="w-full max-h-[250px] object-contain rounded-lg">
       <button
@@ -60,13 +60,13 @@ export default {
   methods: {
     handleUpload(event) {
       const file = event.target.files[0]
-      if (file) {
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          this.$emit('update:modelValue', e.target.result)
-        }
-        reader.readAsDataURL(file)
+      if (!file) return
+
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        this.$emit('update:modelValue', e.target.result)
       }
+      reader.readAsDataURL(file)
     },
     handleRemove() {
       this.$emit('update:modelValue', '')

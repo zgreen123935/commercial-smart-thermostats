@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import { createStore } from 'vuex'
 import App from './App.vue'
+import store from './store'
 import './assets/tailwind.css'
 
 // Import base components
@@ -114,60 +114,6 @@ const router = createRouter({
       component: Complete
     }
   ]
-})
-
-const store = createStore({
-  state() {
-    return {
-      siteDetails: {
-        siteName: '',
-        address: '',
-        numThermostats: 1
-      },
-      installerInfo: {
-        name: '',
-        phone: ''
-      },
-      thermostats: [],
-      currentThermostatIndex: 0,
-      feedback: {
-        rating: 0,
-        comments: ''
-      }
-    }
-  },
-  mutations: {
-    setSiteDetails(state, details) {
-      state.siteDetails = details
-    },
-    setInstallerInfo(state, info) {
-      state.installerInfo = info
-    },
-    updateThermostat(state, { index, data }) {
-      if (!state.thermostats[index]) {
-        state.thermostats[index] = {}
-      }
-      state.thermostats[index] = {
-        ...state.thermostats[index],
-        ...data
-      }
-    },
-    setCurrentThermostatIndex(state, index) {
-      state.currentThermostatIndex = index
-    },
-    setFeedback(state, feedback) {
-      state.feedback = feedback
-    }
-  },
-  getters: {
-    currentThermostat: (state) => {
-      return state.thermostats[state.currentThermostatIndex] || {}
-    },
-    isInstallationComplete: (state) => {
-      return state.thermostats.length === state.siteDetails.numThermostats &&
-             state.thermostats.every(t => t.isVerified)
-    }
-  }
 })
 
 const app = createApp(App)
